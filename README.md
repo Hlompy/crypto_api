@@ -64,12 +64,73 @@ docker-compose up --build
 
 Description: Fetch a list of all stored cryptocurrencies.
 
-Response: Returns a JSON array with all the cryptocurrency data stored in the database.
+Response: Returns a JSON array with all the top cryptocurrencies.
+
+```json
+[
+    {
+        "name": "Bitcoin",
+        "symbol": "btc",
+        "usd_price": 78862
+    },
+    {
+        "name": "Ethereum",
+        "symbol": "eth",
+        "usd_price": 1556.72
+    },
+    {
+        "name": "Tether",
+        "symbol": "usdt",
+        "usd_price": 0.999463
+    },
+]
+
+```
+
+### 2. GET /coins/users
+
+Description: Fetch a list of all cryptocurrencies created by USER from DATABASE.
+
+Response: Returns a JSON array with all the cryptocurrencies of user.
+
+```json
+[
+    {
+        "id": 1,
+        "name": "Hlompushka",
+        "symbol": "hlmp",
+        "usd_price": 0.1489,
+        "is_user_coin": true
+    },
+    {
+        "id": 2,
+        "name": "Vatrushka",
+        "symbol": "vatr",
+        "usd_price": 0.7777,
+        "is_user_coin": true
+    },
+    {
+        "id": 3,
+        "name": "NASHA-PUSHKA",
+        "symbol": "NPU",
+        "usd_price": 0.1337,
+        "is_user_coin": true
+    }
+]
+```
+
+### 3. GET /coins/symbol/{symbol}
+
+Description: Retrieve a specific cryptocurrency by its SYMBOL from API - CoinGecko
+
+Parameters: symbol (required) - The symbol of the cryptocurrency from top cryptocurrencies
+from all world.
+
+Response: Returns the data for a specific coin.
 
 ```json
 [
   {
-    "id": 1,
     "name": "Bitcoin",
     "symbol": "btc",
     "usd_price": 50000
@@ -78,40 +139,41 @@ Response: Returns a JSON array with all the cryptocurrency data stored in the da
 ]
 ```
 
-### 2. GET /coins/{id}
 
-Description: Retrieve a specific cryptocurrency by its ID.
+### 4. GET /coins/{id}
 
-Parameters: id (required) - The ID of the cryptocurrency.
+Description: Retrieve a specific cryptocurrency by its ID from DATABASE.
+
+Parameters: id (required) - The ID of the cryptocurrency created by user.
 
 Response: Returns the data for a specific coin.
 
 ```json
 {
-  "id": 1,
-  "name": "Bitcoin",
-  "symbol": "btc",
-  "usd_price": 50000
+    "id": 2,
+    "name": "Vatrushka",
+    "symbol": "vatr",
+    "usd_price": 0.7777
 }
 ```
 
-### 3. POST /coins
+### 5. POST /coins
 
-Description: Create a new cryptocurrency record.
+Description: Create a new cryptocurrency record in DATABASE.
 
 Body: The request body should contain the details of the new coin, including its name, symbol, and USD price.
 
 ```json
 {
-  "name": "Ethereum",
-  "symbol": "eth",
-  "usd_price": 3000
+    "name": "Monetka",
+    "symbol": "MNT",
+    "usd_price": 0.12345
 }
 ```
 
-### 4. PATCH /coins/{id}
+### 6. PATCH /coins/{id}
 
-Description: Update an existing cryptocurrency record by its ID.
+Description: Update an existing cryptocurrency record in DATABASE by its ID.
 
 Parameters: id (required) - The ID of the cryptocurrency.
 
@@ -123,9 +185,9 @@ Body: The fields to be updated, such as name, symbol, or USD price.
 }
 ```
 
-### 5. DELETE /coins/{id}
+### 7. DELETE /coins/{id}
 
-Description: Delete a cryptocurrency record by its ID.
+Description: Delete a cryptocurrency record by its ID from DATABASE.
 
 Parameters: id (required) - The ID of the cryptocurrency to delete.
 
