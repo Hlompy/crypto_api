@@ -1,35 +1,53 @@
 package main
 
 import (
-	"crypto_api/config"
 	"crypto_api/internal/handlers"
 	"crypto_api/internal/storage"
+	"crypto_api/kafka"
+	"log"
+	"time"
 
-	// Assuming this is where the db connection is initialized
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	// 1. Загрузка .env
-	config.LoadEnv()
+	brokers := []string{"kafka:9092"}
+	topic := "user-coins"
+	groupID := "crypto-api-group"
 
-	// 2. Подключение к PostgreSQL
-	storage.InitDB() // Assuming storage.Init() initializes and returns the DB connection
-	defer storage.Close()
+	kafka.WaitForKafka(brokers, 10, 2*time.Second)
+	kafka.EnsureTopic(brokers[0], topic)
+	storage.InitDB()
 
-	// 3. Кэш
-	//cacheInstance := cache.NewCache(10 * time.Minute) // Renamed variable to avoid conflict
+	// Запуск Kafka Consumer в отдельной горутине
+	go kafka.StartConsumer(brokers, topic, groupID)
 
-	// 4. Инициализация роутов
+	writer := kafka.NewKafkaWriter(brokers, topic)
+
+	// ⏱ Ticker будет каждые 10 секунд проверять базу и слать в Kafka
+	ticker := time.NewTicker(10 * time.Second)
+	defer ticker.Stop()
+
+	for range ticker.C {
+		log.Println("🔁 Проверка базы и публикация монет в Kafka")
+
+		continuePublishing := handlers.PublishUserCoinsToKafka(writer)
+		if !continuePublishing {
+			log.Println("✅ Все монеты опубликованы. Завершаем тикер.")
+			break
+		}
+	}
+
+	// Инициализация роутов
 	router := gin.Default()
-	router.GET("/coins", handlers.GetCoinsListHandler) // Монеты из API
+	router.GET("/coins", handlers.GetCoinsListHandler)
 	router.GET("/coins/symbol/:symbol", handlers.GetCoinBySymbol)
-	router.GET("/coins/:id", handlers.GetCoinByID)           // По ID (из базы)
-	router.GET("/coins/users", handlers.GetUserCoinsHandler) // Монеты пользователя
+	router.GET("/coins/:id", handlers.GetCoinByID)
+	router.GET("/coins/users", handlers.GetUserCoinsHandler)
 	router.POST("/coins", handlers.CreateCoinHandler)
 	router.PATCH("/coins/:id", handlers.UpdateCoinHandler)
 	router.DELETE("/coins/:id", handlers.DeleteCoinHandler)
 
-	// 5. Запуск
+	// Запуск сервера
 	router.Run(":8000")
 }

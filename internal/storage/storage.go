@@ -40,7 +40,9 @@ func InitDB() {
 				id SERIAL PRIMARY KEY,
 				name TEXT NOT NULL,
 				symbol TEXT UNIQUE NOT NULL,
-				usd_price NUMERIC NOT NULL
+				usd_price NUMERIC NOT NULL,
+				is_user_coin BOOLEAN DEFAULT true,
+				published_to_kafka BOOLEAN DEFAULT false
 			)
 		`
 		_, err = db.Exec(createTable)
@@ -94,6 +96,57 @@ func GetUserCoinsByUserFlag(isUserCoin bool) ([]models.UserCoin, error) {
 	}
 
 	return coins, nil
+}
+
+func GetAllUserCoins() ([]models.UserCoin, error) {
+	rows, err := db.Query("SELECT id, name, symbol, usd_price, is_user_coin FROM user_coins")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var coins []models.UserCoin
+	for rows.Next() {
+		var coin models.UserCoin
+		if err := rows.Scan(&coin.ID, &coin.Name, &coin.Symbol, &coin.UsdPrice, &coin.IsUserCoin); err != nil {
+			return nil, err
+		}
+		coins = append(coins, coin)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return coins, nil
+}
+
+func GetUnpublishedUserCoins() ([]models.UserCoin, error) {
+	rows, err := db.Query(`
+		SELECT id, name, symbol, usd_price, is_user_coin 
+		FROM user_coins 
+		WHERE is_user_coin = true AND published_to_kafka = false
+	`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var coins []models.UserCoin
+	for rows.Next() {
+		var coin models.UserCoin
+		if err := rows.Scan(&coin.ID, &coin.Name, &coin.Symbol, &coin.UsdPrice, &coin.IsUserCoin); err != nil {
+			return nil, err
+		}
+		coins = append(coins, coin)
+	}
+
+	return coins, rows.Err()
+}
+
+func MarkCoinAsPublished(id int) error {
+	_, err := db.Exec("UPDATE user_coins SET published_to_kafka = true WHERE id = $1", id)
+	return err
 }
 
 func InsertUserCoin(c models.UserCoin) error {
