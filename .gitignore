@@ -1,0 +1,60 @@
+# IDE settings
+.vscode/
+
+# Go modules
+go.mod
+go.sum
+
+# Binary files
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Env files
+.env
+
+# Docker
+**/postgres_data/
+**/prometheus_data/
+**/grafana_data/
+
+# Logs
+*.log
+
+# System files
+.DS_Store
+Thumbs.db
+# IDE settings
+.vscode/
+
+# Go modules
+go.mod
+go.sum
+
+# Binary files
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Env files
+.env
+
+# Docker
+**/postgres_data/
+**/prometheus_data/
+**/grafana_data/
+
+# Logs
+*.log
+
+# System files
+.DS_Store
+Thumbs.db

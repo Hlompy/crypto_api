@@ -11,7 +11,8 @@ import (
 )
 
 func main() {
-	brokers := []string{"kafka:9092"}
+	storage.InitMetrics()
+	brokers := []string{"kafka:29092"}
 	topic := "user-coins"
 	groupID := "crypto-api-group"
 

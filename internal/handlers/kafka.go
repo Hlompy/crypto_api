@@ -16,6 +16,8 @@ func PublishUserCoinsToKafka(writer *kafkaGo.Writer) bool {
 		return true // true → продолжаем тикать
 	}
 
+	storage.UserCoinsGauge.Set(float64(len(coins)))
+
 	if len(coins) == 0 {
 		log.Println("🛑 Нет новых монет для публикации. Останавливаем публикацию.")
 		return false // false → можно остановить тикер
@@ -46,6 +48,8 @@ func PublishUserCoinsToKafka(writer *kafkaGo.Writer) bool {
 		}
 
 		log.Printf("📤 Отправлено сообщение в Kafka: %s", string(data))
+
+		storage.PublishedMessages.Inc()
 	}
 
 	return true
