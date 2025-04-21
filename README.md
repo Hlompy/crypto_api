@@ -39,6 +39,17 @@ First, clone the repository to your local machine:
 git clone https://github.com/Hlompy/crypto_api.git
 cd crypto_api
 ```
+And add your ``.env`` file
+```bash
+PORT=8080
+DB_HOST=localhost
+DB_PORT=5432
+DB_USER=hlompy
+DB_PASS=12345
+DB_NAME=user_coins
+DB_HOST=db_host
+POSTGRES_DSN=postgres://DB_USER:DB_PASS@DB_HOST:DB_PORT/DB_NAME?sslmode=disable
+```
 
 ### 2. Initialize Go Modules
 
