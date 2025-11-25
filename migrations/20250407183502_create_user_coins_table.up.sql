@@ -1,6 +1,0 @@
-CREATE TABLE IF NOT EXISTS user_coins (
-    id SERIAL PRIMARY KEY,
-    name TEXT NOT NULL,
-    symbol TEXT UNIQUE NOT NULL,
-    usd_price NUMERIC NOT NULL,
-);
