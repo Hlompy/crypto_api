@@ -108,7 +108,7 @@ Response: Returns a JSON array with all the cryptocurrencies of user.
 [
     {
         "id": 1,
-        "name": "Hlompushka",
+        "name": "Hlopushka",
         "symbol": "hlmp",
         "usd_price": 0.1489,
         "is_user_coin": true
@@ -122,7 +122,7 @@ Response: Returns a JSON array with all the cryptocurrencies of user.
     },
     {
         "id": 3,
-        "name": "NASHA-PUSHKA",
+        "name": "NPU",
         "symbol": "NPU",
         "usd_price": 0.1337,
         "is_user_coin": true
